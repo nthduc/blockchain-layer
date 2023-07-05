@@ -8,3 +8,6 @@ VM
 
 1. LocalTransport
 2. Server
+
+RemoteTransport -> SendTx -> Server
+LocalTransport // validator -> 5s -> validator gom cac Tx tao Block

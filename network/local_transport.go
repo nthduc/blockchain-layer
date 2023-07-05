@@ -19,7 +19,6 @@ func NewLocalTransport(addr NetAddr) *LocalTransport {
 		peers:     make(map[NetAddr]*LocalTransport),
 	}
 }
-
 func (tr *LocalTransport) Addr() NetAddr {
 	return tr.addr
 }
@@ -28,26 +27,28 @@ func (tr *LocalTransport) Consume() <-chan RPC {
 	return tr.consumeCh
 }
 
-func (tr *LocalTransport) Connect(trb *LocalTransport) error {
+func (tr *LocalTransport) Connect(trb Transport) error {
 	tr.lock.Lock()
 	defer tr.lock.Unlock()
 
-	tr.peers[trb.Addr()] = trb
+	tr.peers[trb.Addr()] = trb.(*LocalTransport)
 	return nil
 }
 
-func (tr *LocalTransport) sendMessage(to NetAddr, payload []byte) error {
+func (tr *LocalTransport) SendMessage(to NetAddr, payload []byte) error {
 	if tr.addr == to {
-		return fmt.Errorf("Could not send message to yourself!")
+		return fmt.Errorf("could not send message to yourself")
 	}
+
 	peer, ok := tr.peers[to]
 	if !ok {
-		return fmt.Errorf("%s: Could not send message to %s", tr.addr, to)
+		return fmt.Errorf("%s: could mpt send message to %s", tr.addr, to)
 	}
 
 	peer.consumeCh <- RPC{
 		From:    tr.addr,
 		Payload: payload,
 	}
+
 	return nil
 }

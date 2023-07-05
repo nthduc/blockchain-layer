@@ -8,8 +8,8 @@ type RPC struct {
 }
 
 type Transport interface {
-	Connect(*Transport) error
-	SendMessage(*Transport, []byte) error
+	Connect(Transport) error
+	SendMessage(NetAddr, []byte) error
 	Consume() <-chan RPC
 	Addr() NetAddr
 }
